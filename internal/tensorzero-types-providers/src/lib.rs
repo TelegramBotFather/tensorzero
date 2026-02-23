@@ -10,4 +10,5 @@ pub mod mistral;
 pub mod openai;
 pub mod openrouter;
 pub mod serde_util;
+pub mod together;
 pub mod xai;
