@@ -61,7 +61,7 @@ use crate::providers::hyperbolic::HyperbolicProvider;
 use crate::providers::openai::OpenAIAPIType;
 use crate::providers::sglang::SGLangProvider;
 use crate::providers::tgi::TGIProvider;
-use crate::rate_limiting::{RateLimitResourceUsage, TicketBorrows};
+use crate::rate_limiting::{RateLimitResourceUsage, TicketBorrows, decimal_cost_to_nano_cost};
 use crate::utils::mock::get_mock_provider_api_base;
 use crate::{
     endpoints::inference::InferenceCredentials,
@@ -920,17 +920,20 @@ fn wrap_provider_stream(
         otlp_config.apply_usage_to_model_provider_span(&span_clone, &aggregated_usage);
         // Make sure that we finish updating rate-limiting tickets if the gateway shuts down
         deferred_tasks.spawn(async move {
+            let nano_cost = aggregated_usage.cost.map(decimal_cost_to_nano_cost);
             let usage = match (aggregated_usage.total_tokens(), errored) {
                 (Some(tokens), false) => {
                     RateLimitResourceUsage::Exact {
                         model_inferences: 1,
                         tokens: tokens as u64,
+                        nano_cost,
                     }
                 }
                 _ => {
                     RateLimitResourceUsage::UnderEstimate {
                         model_inferences: 1,
                         tokens: aggregated_usage.total_tokens().unwrap_or(0) as u64,
+                        nano_cost,
                     }
                 }
             };
@@ -3140,7 +3143,7 @@ mod tests {
         ";
         let toml_config: crate::config::rate_limiting::TomlUninitializedRateLimitingConfig =
             toml::from_str(toml_str).unwrap();
-        let uninitialized_config: UninitializedRateLimitingConfig = toml_config.into();
+        let uninitialized_config: UninitializedRateLimitingConfig = toml_config.try_into().unwrap();
         let rate_limit_config: RateLimitingConfig = uninitialized_config.try_into().unwrap();
 
         let clients = InferenceClients {
