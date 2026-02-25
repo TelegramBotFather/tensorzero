@@ -551,6 +551,8 @@ dependencies = [
  "tensorzero-derive",
  "tensorzero-types",
  "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
  "tracing",
  "ts-rs",
  "url",
@@ -2708,6 +2710,7 @@ name = "gateway"
 version = "2026.2.1"
 dependencies = [
  "async-stream",
+ "autopilot-client",
  "autopilot-tools",
  "autopilot-worker",
  "axum",
@@ -2734,6 +2737,7 @@ dependencies = [
  "tensorzero-unsafe-helpers",
  "tokio",
  "tokio-stream",
+ "tokio-util",
  "tower-http",
  "tracing",
  "ts-rs",
@@ -7341,6 +7345,7 @@ dependencies = [
  "futures-sink",
  "futures-util",
  "pin-project-lite",
+ "slab",
  "tokio",
 ]
 

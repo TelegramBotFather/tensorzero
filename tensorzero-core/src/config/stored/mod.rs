@@ -25,7 +25,7 @@ use std::sync::Arc;
 use crate::config::gateway::UninitializedGatewayConfig;
 use crate::config::provider_types::ProviderTypesConfig;
 use crate::config::{
-    ClickHouseConfig, MetricConfig, PostgresConfig, UninitializedConfig,
+    AutopilotConfig, ClickHouseConfig, MetricConfig, PostgresConfig, UninitializedConfig,
     UninitializedFunctionConfig, UninitializedToolConfig,
 };
 use crate::evaluations::UninitializedEvaluationConfig;
@@ -71,6 +71,8 @@ pub struct StoredConfig {
     pub rate_limiting: UninitializedRateLimitingConfig,
     #[serde(default)]
     pub embedding_models: HashMap<Arc<str>, StoredEmbeddingModelConfig>,
+    #[serde(default)]
+    pub autopilot: AutopilotConfig,
 }
 
 impl From<UninitializedConfig> for StoredConfig {
@@ -90,6 +92,7 @@ impl From<UninitializedConfig> for StoredConfig {
             provider_types,
             optimizers,
             embedding_models,
+            autopilot,
         } = config;
 
         Self {
@@ -109,6 +112,7 @@ impl From<UninitializedConfig> for StoredConfig {
                 .into_iter()
                 .map(|(k, v)| (k, v.into()))
                 .collect(),
+            autopilot,
         }
     }
 }
@@ -132,6 +136,7 @@ impl TryFrom<StoredConfig> for UninitializedConfig {
             provider_types,
             optimizers,
             embedding_models,
+            autopilot,
         } = stored;
 
         // Migrate deprecated `gateway.observability.disable_automatic_migrations`
@@ -160,6 +165,7 @@ impl TryFrom<StoredConfig> for UninitializedConfig {
                 .into_iter()
                 .map(|(k, v)| (k, v.into()))
                 .collect(),
+            autopilot,
         })
     }
 }
