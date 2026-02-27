@@ -120,7 +120,7 @@ When this field is set to `true`, the gateway will log more verbose errors to as
 - **Type:** boolean
 - **Required:** no (default: `false`)
 
-If set to `true`, TensorZero will not collect or share [pseudonymous usage analytics](/deployment/tensorzero-gateway/#disabling-pseudonymous-usage-analytics).
+If set to `true`, TensorZero will not collect or share pseudonymous usage analytics.
 
 ### `export.otlp.traces.enabled`
 
@@ -466,7 +466,7 @@ routing = ["openai", "azure"]
 - **Required:** no
 
 Configures how to extract cost information from batch inference provider responses.
-This is used for cost tracking of [batch inferences](/gateway/batch-inference).
+This is used for cost tracking of [batch inferences](/gateway/guides/batch-inference).
 
 Many providers offer discounted pricing for batch inferences compared to real-time inferences.
 Use `batch_cost` to configure the batch-specific rates.
